@@ -1,41 +1,43 @@
 import React, { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
 import { AuthProvider } from "./context/AuthContext.tsx";
-
-
+import { DocumentProvider } from "./context/DocumentContext.tsx";
+import { UserProvider } from "./context/UserContext.tsx";
+import Layout from "./components/Principal/Layout.tsx";
 import ProtectedRoute from "./components/Auth/ProtectedRoute.tsx";
 import { Login } from "./pages/login.tsx";
-import Layout from "./components/Principal/Layout.tsx";
-
+import { Register } from "./pages/register.tsx";
+import { MisDocumentos } from "./pages/documents.tsx";
+import LoadingFallback from "./components/shared/Loading.tsx";
 
 const Dashboard = lazy(() => import("./pages/dashboard"));
-
-const LoadingFallback = () => (
-  <div className="flex items-center justify-center w-full h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-    <p className="ml-3 text-lg">Cargando...</p>
-  </div>
-);
+const Profile = lazy(() => import("./pages/profile"));
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Layout>
-                  <Dashboard />
-                </Layout>
-              </ProtectedRoute>
-            } />
-            <Route path="/login" element={<Login />} />
+      <UserProvider>
+        <DocumentProvider>
+          <BrowserRouter>
+            <Suspense fallback={<LoadingFallback fullscreen={true} />}>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter> </AuthProvider>
+                <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/mis-documentos" element={<MisDocumentos />} />
+                  <Route path="/perfil" element={<Profile />} />
+                </Route>
+
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </DocumentProvider>
+      </UserProvider>
+    </AuthProvider>
   );
 };
 
