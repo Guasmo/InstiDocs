@@ -1,5 +1,6 @@
 import api from './api';
 import type { Document, UploadDocumentResponse } from '../interfaces/Document';
+import { documentsApi, uploadDocumentApi } from '../constants/endpoints';
 
 
 const documentService = {
@@ -12,7 +13,7 @@ const documentService = {
 
         // Use api instance directly but let axios set the Content-Type automatically
         const response = await api.post<UploadDocumentResponse>(
-            '/documents/upload',
+            uploadDocumentApi,
             formData,
             {
                 headers: {
@@ -27,21 +28,21 @@ const documentService = {
      * Get all documents for the authenticated user
      */
     getAllDocuments: async (): Promise<Document[]> => {
-        return api.get<Document[]>('/documents').then(res => res.data);
+        return api.get<Document[]>(documentsApi).then(res => res.data);
     },
 
     /**
      * Get a single document by ID
      */
     getDocumentById: async (id: string): Promise<Document> => {
-        return api.get<Document>(`/documents/${id}`).then(res => res.data);
+        return api.get<Document>(`${documentsApi}/${id}`).then(res => res.data);
     },
 
     /**
      * Delete a document
      */
     deleteDocument: async (id: string): Promise<void> => {
-        return api.delete(`/documents/${id}`).then(() => undefined);
+        return api.delete(`${documentsApi}/${id}`).then(() => undefined);
     },
 };
 
