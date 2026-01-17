@@ -4,9 +4,9 @@ import Cookie from 'js-cookie';
 
 import apiService from "../service/apiService.ts";
 import type { LoginParams } from '../types/authTypes.ts';
-import type { AuthResponse } from '../interfaces/Auth.ts';
-import { loginApi } from '../constants/endpoints.ts';
+import { loginApi, registerApi } from '../constants/endpoints.ts';
 import { AuthContext } from '../hooks/useAuthContext.ts';
+import type { AuthResponse } from '../interfaces/Auth.ts';
 
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -65,6 +65,21 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
     };
 
+    const register = async (fullName: string, email: string, password: string) => {
+        try {
+            setLoading(true);
+            const data = { fullName, email, password };
+            await apiService.createReqRes(registerApi, data);
+            return { success: true };
+        } catch (error: any) {
+            console.error('Register error:', error);
+            const errorMessage = error.response?.data?.message || error.message || 'Error al registrarse';
+            return { success: false, error: errorMessage };
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const logout = () => {
         try {
             setLoading(true);
@@ -82,7 +97,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, userId, accessToken, loading, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, userId, accessToken, loading, login, register, logout }}>
             {children}
         </AuthContext.Provider>
     );
