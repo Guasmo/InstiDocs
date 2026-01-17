@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export const Login: React.FC = () => {
     const [email, setEmail] = useState("");
@@ -20,8 +21,8 @@ export const Login: React.FC = () => {
         }
     }, [isAuthenticated, navigate, location]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
         const result = await login(email, password);
         if (result.success) {
             // Navigation is handled by useEffect
@@ -42,15 +43,15 @@ export const Login: React.FC = () => {
             </div>
 
             {/* Title */}
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Sign in to your Account</h1>
-            <p className="text-gray-500 mb-10">Enter your email and password to log in</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2 text-center">Inicia sesión en tu cuenta</h1>
+            <p className="text-gray-500 mb-10 text-center">Ingresa tu correo y contraseña para entrar</p>
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4">
                 <div className="relative">
                     <input
                         type="email"
-                        placeholder="Loisbecket@gmail.com"
+                        placeholder="tu_correo@ejemplo.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full px-5 py-4 bg-white border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm text-gray-700 placeholder-gray-400"
@@ -91,9 +92,9 @@ export const Login: React.FC = () => {
                                 </svg>
                             )}
                         </div>
-                        <span className="text-gray-500 text-sm">Remember me</span>
+                        <span className="text-gray-500 text-sm">Recuérdame</span>
                     </label>
-                    <a href="#" className="text-blue-600 text-sm font-medium hover:underline">Forgot Password ?</a>
+                    <a href="#" className="text-blue-600 text-sm font-medium hover:underline">¿Olvidaste tu contraseña?</a>
                 </div>
 
                 <button
@@ -101,14 +102,14 @@ export const Login: React.FC = () => {
                     disabled={loading}
                     className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-blue-200 active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100"
                 >
-                    {loading ? "Logging in..." : "Log In"}
+                    {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
                 </button>
             </form>
 
             {/* Divider */}
             <div className="w-full max-w-md flex items-center my-8">
                 <div className="flex-1 h-px bg-gray-200"></div>
-                <span className="px-4 text-gray-400 text-sm">Or</span>
+                <span className="px-4 text-gray-400 text-sm">O</span>
                 <div className="flex-1 h-px bg-gray-200"></div>
             </div>
 
@@ -116,17 +117,17 @@ export const Login: React.FC = () => {
             <div className="w-full max-w-md space-y-4">
                 <button className="w-full py-4 bg-white border border-gray-100 rounded-2xl flex items-center justify-center space-x-3 hover:bg-gray-50 transition-all shadow-sm active:scale-[0.98]">
                     <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-6 h-6" />
-                    <span className="text-gray-700 font-semibold">Continue with Google</span>
+                    <span className="text-gray-700 font-semibold">Continuar con Google</span>
                 </button>
                 <button className="w-full py-4 bg-white border border-gray-100 rounded-2xl flex items-center justify-center space-x-3 hover:bg-gray-50 transition-all shadow-sm active:scale-[0.98]">
                     <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" className="w-6 h-6" />
-                    <span className="text-gray-700 font-semibold">Continue with Facebook</span>
+                    <span className="text-gray-700 font-semibold">Continuar con Facebook</span>
                 </button>
             </div>
 
             {/* Footer */}
             <p className="mt-12 text-gray-500">
-                Don't have an account? <a href="#" className="text-blue-600 font-semibold hover:underline">Sign Up</a>
+                ¿No tienes una cuenta? <Link to="/register" className="text-blue-600 font-semibold hover:underline">Regístrate</Link>
             </p>
         </div>
     );
