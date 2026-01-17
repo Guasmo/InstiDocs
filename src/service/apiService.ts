@@ -1,4 +1,5 @@
 import api from "./api.ts";
+import { uploadImageApi, deleteImageApi } from "../constants/endpoints.ts";
 
 const apiService = {
 
@@ -44,7 +45,7 @@ const apiService = {
         const formData = new FormData();
         formData.append('image', file);
 
-        const response = await api.post('/upload/image', formData, {
+        const response = await api.post(uploadImageApi, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -53,7 +54,7 @@ const apiService = {
     },
 
     deleteImage: async (filename: string): Promise<void> => {
-        await api.delete(`/upload/image/${filename}`);
+        await api.delete(`${deleteImageApi}/${filename}`);
     },
 };
 
