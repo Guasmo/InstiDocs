@@ -16,6 +16,7 @@ const Profile = lazy(() => import("./pages/profile"));
 const CoursesPage = lazy(() => import("./pages/CoursesPage"));
 const CourseDetailsPage = lazy(() => import("./pages/CourseDetailsPage"));
 const CreateCoursePage = lazy(() => import("./pages/CreateCoursePage"));
+const UserManagementPage = lazy(() => import("./pages/UserManagementPage"));
 
 const App: React.FC = () => {
   return (
@@ -35,6 +36,7 @@ const App: React.FC = () => {
                   <Route path="/courses" element={<CoursesPage />} />
                   <Route path="/courses/:id" element={<CourseDetailsPage />} />
                   <Route path="/create-course" element={<CreateCoursePage />} />
+                  <Route path="/admin/users" element={<UserManagementPage />} />
                 </Route>
 
                 <Route path="*" element={<Navigate to="/" replace />} />
