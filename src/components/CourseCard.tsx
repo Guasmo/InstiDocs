@@ -1,14 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Course } from '../interfaces/Course';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { MoreVertical, Trash2 } from 'lucide-react';
+import { useUserContext } from '../context/UserContext';
 
 interface CourseCardProps {
     course: Course;
+    onDelete?: (id: string) => void;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+const CourseCard: React.FC<CourseCardProps> = ({ course, onDelete }) => {
+    const { user } = useUserContext();
+    const [showMenu, setShowMenu] = useState(false);
+    const navigate = useNavigate();
+
+    const handleCardClick = (e: React.MouseEvent) => {
+        // Prevent navigation if clicking on menu or button or link
+        if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('a')) {
+            return;
+        }
+        navigate(`/courses/${course.id}`);
+    };
+
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 group cursor-pointer flex flex-col h-full">
+        <div
+            onClick={handleCardClick}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 group flex flex-col h-full relative cursor-pointer"
+            onMouseLeave={() => setShowMenu(false)}
+        >
             {/* Header with Image and Badge */}
             <div className="relative h-32 overflow-hidden">
                 <img
@@ -29,11 +48,11 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             {/* Content */}
             <div className="p-4 flex flex-col flex-grow relative">
                 <div className="flex justify-between items-start mb-4">
-                    <Link to={`/courses/${course.id}`} className="hover:underline decoration-blue-600 underline-offset-4">
+                    <div className="hover:underline decoration-blue-600 underline-offset-4">
                         <h3 className="text-base font-bold text-teal-800 line-clamp-2 leading-tight uppercase">
                             {course.name}
                         </h3>
-                    </Link>
+                    </div>
                 </div>
 
                 <div className="mt-auto flex justify-between items-center pt-4 border-t border-gray-50">
@@ -49,11 +68,35 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
                     </div>
 
                     {/* Options Button */}
-                    <button className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600">
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                        </svg>
-                    </button>
+                    <div className="relative">
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setShowMenu(!showMenu);
+                            }}
+                            className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600"
+                        >
+                            <MoreVertical size={18} />
+                        </button>
+
+                        {showMenu && user?.role === 'ADMIN' && onDelete && (
+                            <div className="absolute bottom-full right-0 mb-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-30 animate-in fade-in zoom-in-95 duration-200">
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setShowMenu(false);
+                                        onDelete(course.id);
+                                    }}
+                                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                >
+                                    <Trash2 size={16} />
+                                    <span>Eliminar Curso</span>
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

@@ -8,6 +8,8 @@ import LoadingFallback from '../components/shared/Loading';
 import { RefreshButton } from '../components/shared/RefreshButton';
 import { PageHeader } from '../components/shared/PageHeader';
 
+import notificationService from '../service/notificationService';
+
 const CoursesPage: React.FC = () => {
     const [courses, setCourses] = useState<Course[]>([]);
     const [loading, setLoading] = useState(true);
@@ -22,6 +24,19 @@ const CoursesPage: React.FC = () => {
             console.error('Error fetching courses:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeleteCourse = async (id: string) => {
+        if (window.confirm('¿Estás seguro de que deseas eliminar este curso?')) {
+            try {
+                await courseService.deleteCourse(id);
+                notificationService.success('Curso eliminado correctamente');
+                fetchCourses();
+            } catch (error) {
+                console.error('Error deleting course:', error);
+                notificationService.error('Error al eliminar el curso');
+            }
         }
     };
 
@@ -60,7 +75,7 @@ const CoursesPage: React.FC = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {courses.map((course) => (
-                        <CourseCard key={course.id} course={course} />
+                        <CourseCard key={course.id} course={course} onDelete={() => handleDeleteCourse(course.id)} />
                     ))}
                 </div>
             )}

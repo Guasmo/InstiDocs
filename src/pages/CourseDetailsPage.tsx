@@ -1,25 +1,29 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
 import { courseService } from '../service/courseService';
 import type { Course } from '../interfaces/Course';
 import { useUserContext } from '../context/UserContext';
-import { useNavigate, useParams } from 'react-router-dom';
 import { UploadSection } from '../components/dashboard/UploadSection';
 import LoadingFallback from '../components/shared/Loading';
 import { RefreshButton } from '../components/shared/RefreshButton';
 import { formatDate } from '../utils/formatters';
+import notificationService from '../service/notificationService';
 
 const CourseDetailsPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();
+
     const [course, setCourse] = useState<Course | null>(null);
     const [loading, setLoading] = useState(true);
-    const [deleting, setDeleting] = useState(false);
+
     const { user } = useUserContext();
     const [emailToAdd, setEmailToAdd] = useState('');
     const [addingStudent, setAddingStudent] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [activeTab, setActiveTab] = useState<'documents' | 'students'>('documents');
+
     const [showAddStudent, setShowAddStudent] = useState(false);
+    const [showMenu, setShowMenu] = useState(false);
 
     const [viewMode, setViewMode] = useState<'subject' | 'user'>('subject');
 
@@ -46,12 +50,12 @@ const CourseDetailsPage: React.FC = () => {
         try {
             setAddingStudent(true);
             await courseService.addStudentToCourse(id, emailToAdd);
-            alert('Student added successfully');
+            notificationService.success('Estudiante agregado correctamente');
             setEmailToAdd('');
             fetchCourse(); // Refresh to update student count
         } catch (error) {
             console.error('Error adding student:', error);
-            alert('Failed to add student');
+            notificationService.error('Error al agregar estudiante');
         } finally {
             setAddingStudent(false);
         }
@@ -65,24 +69,9 @@ const CourseDetailsPage: React.FC = () => {
             await fetchCourse(); // Refresh to show new file
         } catch (error) {
             console.error('Error uploading file:', error);
-            alert('Failed to upload file');
+            notificationService.error('Error al subir archivo');
         } finally {
             setUploading(false);
-        }
-    };
-
-    const handleDeleteCourse = async () => {
-        if (!id || !window.confirm('Are you sure you want to delete this course?')) return;
-
-        try {
-            setDeleting(true);
-            await courseService.deleteCourse(id);
-            navigate('/courses');
-        } catch (error) {
-            console.error('Error deleting course:', error);
-            alert('Failed to delete course');
-        } finally {
-            setDeleting(false);
         }
     };
 
@@ -116,18 +105,15 @@ const CourseDetailsPage: React.FC = () => {
 
                 <div className="flex items-center gap-3">
                     <RefreshButton onRefresh={fetchCourse} />
-                    {user?.role === 'ADMIN' && (
+
+
+                    <div className="relative">
                         <button
-                            onClick={handleDeleteCourse}
-                            disabled={deleting}
-                            className="p-2.5 text-red-500 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-100"
-                            title="Eliminar Curso"
+                            onClick={() => setShowMenu(!showMenu)}
+                            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-all"
                         >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
                         </button>
-                    )}
+                    </div>
                 </div>
             </div>
 
@@ -157,7 +143,7 @@ const CourseDetailsPage: React.FC = () => {
                 >
                     Estudiantes
                     <span className="ml-2 px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">
-                        {course._count?.students || 0}
+                        {course.students?.length || 0}
                     </span>
                     {activeTab === 'students' && (
                         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />
@@ -212,7 +198,11 @@ const CourseDetailsPage: React.FC = () => {
                                         </div>
                                         <div className="grid gap-3">
                                             {docs?.map((doc) => (
-                                                <div key={doc.id} className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 hover:border-blue-200 transition-all">
+                                                <div
+                                                    key={doc.id}
+                                                    onClick={() => window.open(doc.url, '_blank')}
+                                                    className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 hover:border-blue-200 transition-all cursor-pointer"
+                                                >
                                                     <div className="flex items-center gap-4">
                                                         <div className="p-2.5 bg-blue-50 rounded-lg">
                                                             <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -224,7 +214,15 @@ const CourseDetailsPage: React.FC = () => {
                                                             <p className="text-xs text-gray-500">{formatDate(doc.createdAt)}</p>
                                                         </div>
                                                     </div>
-                                                    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 text-sm font-bold bg-blue-50 px-4 py-2 rounded-lg transition-colors">Descargar</a>
+                                                    <a
+                                                        href={doc.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        className="text-blue-600 hover:text-blue-800 text-sm font-bold bg-blue-50 px-4 py-2 rounded-lg transition-colors"
+                                                    >
+                                                        Descargar
+                                                    </a>
                                                 </div>
                                             ))}
                                         </div>
@@ -235,7 +233,11 @@ const CourseDetailsPage: React.FC = () => {
                             course.documents && course.documents.length > 0 ? (
                                 <div className="grid gap-4">
                                     {course.documents.map((doc) => (
-                                        <div key={doc.id} className="flex items-center justify-between p-5 border border-gray-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/30 transition-all group">
+                                        <div
+                                            key={doc.id}
+                                            onClick={() => window.open(doc.url, '_blank')}
+                                            className="flex items-center justify-between p-5 border border-gray-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/30 transition-all group cursor-pointer"
+                                        >
                                             <div className="flex items-center gap-5">
                                                 <div className="p-3 bg-blue-50 rounded-xl group-hover:bg-blue-100 transition-colors">
                                                     <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -253,6 +255,7 @@ const CourseDetailsPage: React.FC = () => {
                                                 href={doc.url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
+                                                onClick={(e) => e.stopPropagation()}
                                                 className="bg-gray-50 text-gray-700 hover:bg-blue-600 hover:text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm"
                                             >
                                                 Descargar
