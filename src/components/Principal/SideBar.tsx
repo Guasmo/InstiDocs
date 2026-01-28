@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { FileText, LayoutDashboard, LogOut, User, X, BookOpen } from "lucide-react";
+import { FileText, LayoutDashboard, LogOut, User, X, BookOpen, Users } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { useUserContext } from "../../context/UserContext";
 import { useWindowSize } from "../../hooks/useWindowSize";
 
 interface SideBarProps {
@@ -12,6 +13,7 @@ interface SideBarProps {
 
 const SideBar = ({ isOpen, onClose }: SideBarProps) => {
     const { logout } = useAuthContext();
+    const { user } = useUserContext();
     const { isMobile } = useWindowSize();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -19,6 +21,7 @@ const SideBar = ({ isOpen, onClose }: SideBarProps) => {
         { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/' },
         { icon: <FileText size={20} />, label: 'Mis Documentos', path: '/mis-documentos' },
         { icon: <BookOpen size={20} />, label: 'Cursos', path: '/courses' },
+        ...(user?.role === 'ADMIN' ? [{ icon: <Users size={20} />, label: 'Gestión Usuarios', path: '/admin/users' }] : []),
         { icon: <User size={20} />, label: 'Perfil', path: '/perfil' }
     ];
 
