@@ -6,11 +6,16 @@ export const formatFileSize = (bytes: number): string => {
 
 export const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
+    const datePart = date.toLocaleDateString('es-ES', {
         day: 'numeric',
         month: 'short',
         year: 'numeric',
     });
+    const timePart = date.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+    return `${datePart} • ${timePart}`;
 };
 
 export const getFileIcon = (mimetype: string): string => {
