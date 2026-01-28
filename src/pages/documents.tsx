@@ -37,10 +37,16 @@ export const MisDocumentos = React.memo(() => {
 
     return (
         <div className="space-y-10 animate-in fade-in duration-500 w-full pb-10">
-            <PageHeader
-                title="Mis Documentos"
-                description="Gestiona todos tus archivos institucionales en un solo lugar."
-            />
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                <PageHeader
+                    title="Mis Documentos"
+                    description="Gestiona todos tus archivos institucionales en un solo lugar."
+                />
+                <div className="flex items-center gap-3">
+                    <RefreshButton onRefresh={fetchDocuments} />
+                    <UploadSection onUpload={handleUpload} uploading={uploading} />
+                </div>
+            </div>
 
             {uploadError && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl">
@@ -48,15 +54,7 @@ export const MisDocumentos = React.memo(() => {
                 </div>
             )}
 
-            <SectionCard
-                title={`Todos los Documentos (${documents.length})`}
-                rightElement={
-                    <div className="flex items-center gap-3">
-                        <RefreshButton onRefresh={fetchDocuments} />
-                        <UploadSection onUpload={handleUpload} uploading={uploading} />
-                    </div>
-                }
-            >
+            <SectionCard title={`Todos los Documentos (${documents.length})`}>
                 <DocumentList
                     documents={documents}
                     loading={loading}
