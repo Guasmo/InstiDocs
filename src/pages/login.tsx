@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
 import { useAuthContext } from "../hooks/useAuthContext";
+import notificationService from "../service/notificationService";
 
 export const Login: React.FC = () => {
     const [email, setEmail] = useState("");
@@ -27,7 +28,7 @@ export const Login: React.FC = () => {
         if (result.success) {
             // Navigation is handled by useEffect
         } else {
-            alert("Error al iniciar sesión. Por favor verifica tus credenciales.");
+            notificationService.error(result.error || "Error al iniciar sesión. Por favor verifica tus credenciales.");
         }
     };
 
@@ -113,20 +114,8 @@ export const Login: React.FC = () => {
                 <div className="flex-1 h-px bg-gray-200"></div>
             </div>
 
-            {/* Social Logins */}
-            <div className="w-full max-w-md space-y-4">
-                <button className="w-full py-4 bg-white border border-gray-100 rounded-2xl flex items-center justify-center space-x-3 hover:bg-gray-50 transition-all shadow-sm active:scale-[0.98]">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-6 h-6" />
-                    <span className="text-gray-700 font-semibold">Continuar con Google</span>
-                </button>
-                <button className="w-full py-4 bg-white border border-gray-100 rounded-2xl flex items-center justify-center space-x-3 hover:bg-gray-50 transition-all shadow-sm active:scale-[0.98]">
-                    <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" className="w-6 h-6" />
-                    <span className="text-gray-700 font-semibold">Continuar con Facebook</span>
-                </button>
-            </div>
-
             {/* Footer */}
-            <p className="mt-12 text-gray-500">
+            <p className="text-gray-500">
                 ¿No tienes una cuenta? <Link to="/register" className="text-blue-600 font-semibold hover:underline">Regístrate</Link>
             </p>
         </div>
