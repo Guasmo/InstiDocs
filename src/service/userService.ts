@@ -1,5 +1,5 @@
 import api from './api';
-import { updateUserApi, getUserByIdApi } from '../constants/endpoints';
+import { updateUserApi, getUserByIdApi, getTeachersApi } from '../constants/endpoints';
 import type { UserInterface, UpdateUserData } from '../interfaces/User';
 
 const userService = {
@@ -16,6 +16,14 @@ const userService = {
      */
     updateUser: async (id: string, data: UpdateUserData): Promise<UserInterface> => {
         const response = await api.patch<UserInterface>(`${updateUserApi}/${id}`, data);
+        return response.data;
+    },
+
+    /**
+     * Get all teachers
+     */
+    getTeachers: async (): Promise<UserInterface[]> => {
+        const response = await api.get<UserInterface[]>(getTeachersApi);
         return response.data;
     },
 };
