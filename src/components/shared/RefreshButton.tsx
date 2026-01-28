@@ -25,7 +25,7 @@ export const RefreshButton: React.FC<RefreshButtonProps> = ({ onRefresh, classNa
         <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className={`p-2.5 bg-white border border-gray-100 rounded-xl hover:bg-gray-50 hover:border-gray-200 transition-all duration-300 group shadow-sm hover:shadow-md disabled:opacity-50 ${className}`}
+            className={`flex items-center justify-center p-2.5 bg-white border border-gray-100 rounded-xl hover:bg-gray-50 hover:border-gray-200 transition-all duration-300 group shadow-sm hover:shadow-md disabled:opacity-50 ${className}`}
             title="Actualizar documentos"
         >
             <RefreshCw
