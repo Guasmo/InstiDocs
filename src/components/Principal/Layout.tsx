@@ -53,7 +53,7 @@ const Layout: React.FC = () => {
 
                 {/* Content Area - Wider container */}
                 <div className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12">
-                    <div className="max-w-[1600px] mx-auto w-full">
+                    <div className="max-w-8xl mx-auto w-full">
                         <Outlet />
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, LayoutDashboard, LogOut, User, X } from "lucide-react";
+import { FileText, LayoutDashboard, LogOut, User, X, BookOpen } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 import { useAuthContext } from "../../hooks/useAuthContext";
@@ -18,6 +18,7 @@ const SideBar = ({ isOpen, onClose }: SideBarProps) => {
     const menuItems = [
         { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/' },
         { icon: <FileText size={20} />, label: 'Mis Documentos', path: '/mis-documentos' },
+        { icon: <BookOpen size={20} />, label: 'Cursos', path: '/courses' },
         { icon: <User size={20} />, label: 'Perfil', path: '/perfil' }
     ];
 
