@@ -13,6 +13,9 @@ import LoadingFallback from "./components/shared/Loading.tsx";
 
 const Dashboard = lazy(() => import("./pages/dashboard"));
 const Profile = lazy(() => import("./pages/profile"));
+const CoursesPage = lazy(() => import("./pages/CoursesPage"));
+const CourseDetailsPage = lazy(() => import("./pages/CourseDetailsPage"));
+const CreateCoursePage = lazy(() => import("./pages/CreateCoursePage"));
 
 const App: React.FC = () => {
   return (
@@ -29,6 +32,9 @@ const App: React.FC = () => {
                   <Route path="/" element={<Dashboard />} />
                   <Route path="/mis-documentos" element={<MisDocumentos />} />
                   <Route path="/perfil" element={<Profile />} />
+                  <Route path="/courses" element={<CoursesPage />} />
+                  <Route path="/courses/:id" element={<CourseDetailsPage />} />
+                  <Route path="/create-course" element={<CreateCoursePage />} />
                 </Route>
 
                 <Route path="*" element={<Navigate to="/" replace />} />
