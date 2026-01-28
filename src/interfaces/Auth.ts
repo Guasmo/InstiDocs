@@ -5,7 +5,7 @@ export interface AuthContextType {
     userId: string | null;
     accessToken: string | null;
     loading: boolean;
-    login: (email: string, password: string) => Promise<{ success: boolean }>;
+    login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
     register: (fullName: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
     logout: () => void;
 }

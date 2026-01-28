@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import notificationService from '../service/notificationService';
 
 import { useDocuments } from '../hooks/useDocuments';
 import { UploadSection } from '../components/dashboard/UploadSection';
@@ -10,15 +11,14 @@ import { RefreshButton } from '../components/shared/RefreshButton';
 export const MisDocumentos = React.memo(() => {
     const { documents, loading, error, uploadDocument, deleteDocument, fetchDocuments } = useDocuments();
     const [uploading, setUploading] = useState(false);
-    const [uploadError, setUploadError] = useState<string | null>(null);
 
     const handleUpload = useCallback(async (file: File) => {
         try {
             setUploading(true);
-            setUploadError(null);
             await uploadDocument(file);
+            notificationService.success('Archivo subido correctamente');
         } catch (err: any) {
-            setUploadError(err.message || 'Error al subir el archivo');
+            notificationService.error(err.message || 'Error al subir el archivo');
         } finally {
             setUploading(false);
         }
@@ -29,8 +29,10 @@ export const MisDocumentos = React.memo(() => {
         if (window.confirm('¿Estás seguro de que deseas eliminar este documento?')) {
             try {
                 await deleteDocument(id);
+                notificationService.success('Documento eliminado correctamente');
             } catch (err) {
                 console.error('Error deleting document:', err);
+                notificationService.error('Error al eliminar el documento');
             }
         }
     }, [deleteDocument]);
@@ -47,12 +49,6 @@ export const MisDocumentos = React.memo(() => {
                     <UploadSection onUpload={handleUpload} uploading={uploading} />
                 </div>
             </div>
-
-            {uploadError && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl">
-                    {uploadError}
-                </div>
-            )}
 
             <SectionCard title={`Todos los Documentos (${documents.length})`}>
                 <DocumentList

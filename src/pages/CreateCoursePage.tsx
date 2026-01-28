@@ -122,18 +122,18 @@ const CreateCoursePage: React.FC = () => {
                     </div>
                 )}
 
-                <div className="flex justify-end gap-4">
+                <div className="flex justify-end gap-3">
                     <button
                         type="button"
                         onClick={() => navigate('/courses')}
-                        className="px-6 py-2 border rounded-md hover:bg-gray-50 transition-colors"
+                        className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-50 transition-colors"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         disabled={loading}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400"
+                        className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-400 shadow-sm shadow-blue-200"
                     >
                         {loading ? 'Creating...' : 'Create Course'}
                     </button>

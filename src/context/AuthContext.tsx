@@ -53,13 +53,14 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
             console.error('Login error:', error);
             if (error.response) {
                 console.error('Error in server response:', error.response.data);
+                return { success: false, error: error.response.data.message };
             } else if (error.request) {
                 console.error('No response from server:', error.request);
+                return { success: false, error: 'No response from server' };
             } else {
                 console.error('Error while setting up the request', error.message);
+                return { success: false, error: error.message };
             }
-
-            return { success: false };
         } finally {
             setLoading(false);
         }
