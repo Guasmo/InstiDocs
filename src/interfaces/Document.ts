@@ -6,6 +6,10 @@ export interface Document {
     mimetype: string;
     size: number;
     userId: string;
+    user?: {
+        email: string;
+        fullName: string | null;
+    };
     createdAt: string;
     updatedAt: string;
 }

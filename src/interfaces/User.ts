@@ -3,6 +3,7 @@ export interface UserInterface {
     email: string;
     password: string;
     fullName: string;
+    role: 'STUDENT' | 'TEACHER' | 'ADMIN';
 }
 
 export interface UpdateUserData {
