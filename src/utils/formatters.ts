@@ -40,3 +40,34 @@ export const getDownloadUrl = (url: string): string => {
     }
     return url;
 };
+
+export const normalizeText = (text: string | null | undefined): string => {
+    if (!text) return '';
+
+    // Diccionario de reemplazos para limpiar codificación dañada
+    // Priorizamos secuencias de 2 bytes (UTF-8 común)
+    const patterns = [
+        { regex: /Ã¡/g, replacement: 'á' },
+        { regex: /Ã©/g, replacement: 'é' },
+        { regex: /Ã\u00ad/g, replacement: 'í' },
+        { regex: /Ã³/g, replacement: 'ó' },
+        { regex: /Ãº/g, replacement: 'ú' },
+        { regex: /Ã±/g, replacement: 'ñ' },
+
+        // Caracteres "huérfanos" (restos de UTF-8 cuando se pierde el lead byte)
+        { regex: /³/g, replacement: 'ó' },
+        { regex: /\u00BA/g, replacement: 'ú' },
+        { regex: /\u00A9/g, replacement: 'é' },
+        { regex: /\u00A1/g, replacement: 'á' },
+    ];
+
+    let result = text;
+    patterns.forEach(({ regex, replacement }) => {
+        result = result.replace(regex, replacement);
+    });
+
+    // Limpieza final: normalizar a NFC y quitar espacios extra
+    return result.normalize('NFC').replace(/\s+/g, ' ').trim();
+};
+
+
