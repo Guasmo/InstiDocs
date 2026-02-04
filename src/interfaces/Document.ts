@@ -5,7 +5,9 @@ export interface Document {
     url: string;
     mimetype: string;
     size: number;
+    description?: string;
     userId: string;
+
     user?: {
         email: string;
         fullName: string | null;

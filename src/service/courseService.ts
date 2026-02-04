@@ -35,4 +35,9 @@ export const courseService = {
     deleteCourse: async (id: string): Promise<void> => {
         await api.delete(`${coursesApi}/${id}`);
     },
+
+    updateCourse: async (id: string, courseData: Partial<CreateCourseDto>): Promise<Course> => {
+        const response = await api.patch<Course>(`${coursesApi}/${id}`, courseData);
+        return response.data;
+    },
 };
