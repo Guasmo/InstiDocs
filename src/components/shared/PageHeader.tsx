@@ -10,8 +10,9 @@ export const PageHeader = React.memo(({ title, description }: PageHeaderProps) =
         <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
             {title}
         </h1>
-        <p className="text-gray-500 text-lg">{description}</p>
+        <p className="text-gray-500 text-sm md:text-lg">{description}</p>
     </div>
+
 ));
 
 PageHeader.displayName = 'PageHeader';
