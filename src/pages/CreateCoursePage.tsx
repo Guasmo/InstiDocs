@@ -10,6 +10,9 @@ const CreateCoursePage: React.FC = () => {
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const [section, setSection] = useState<'MATUTINA' | 'VESPERTINA' | 'NOCTURNA'>('MATUTINA');
+    const [startYear, setStartYear] = useState(new Date().getFullYear());
+    const [endYear, setEndYear] = useState(new Date().getFullYear() + 1);
     const [teacherId, setTeacherId] = useState('');
     const [teachers, setTeachers] = useState<UserInterface[]>([]);
     const [loading, setLoading] = useState(false);
@@ -53,6 +56,9 @@ const CreateCoursePage: React.FC = () => {
             await courseService.createCourse({
                 name,
                 description,
+                section,
+                startYear,
+                endYear,
                 teacherId: finalTeacherId
             });
             navigate('/courses');
@@ -88,6 +94,52 @@ const CreateCoursePage: React.FC = () => {
                     />
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label htmlFor="section" className="block text-sm font-bold text-gray-700 mb-1 ml-1">
+                            Sección
+                        </label>
+                        <select
+                            id="section"
+                            value={section}
+                            onChange={(e) => setSection(e.target.value as any)}
+                            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all font-medium cursor-pointer"
+                            required
+                        >
+                            <option value="MATUTINA">Matutina</option>
+                            <option value="VESPERTINA">Vespertina</option>
+                            <option value="NOCTURNA">Nocturna</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label htmlFor="startYear" className="block text-sm font-medium text-gray-700 mb-1">
+                            Año Inicio
+                        </label>
+                        <input
+                            type="number"
+                            id="startYear"
+                            value={startYear}
+                            onChange={(e) => setStartYear(parseInt(e.target.value))}
+                            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="endYear" className="block text-sm font-medium text-gray-700 mb-1">
+                            Año Fin
+                        </label>
+                        <input
+                            type="number"
+                            id="endYear"
+                            value={endYear}
+                            onChange={(e) => setEndYear(parseInt(e.target.value))}
+                            className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            required
+                        />
+                    </div>
+                </div>
+
                 <div>
                     <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
                         Description
@@ -121,6 +173,7 @@ const CreateCoursePage: React.FC = () => {
                         </select>
                     </div>
                 )}
+
 
                 <div className="flex justify-end gap-3">
                     <button
