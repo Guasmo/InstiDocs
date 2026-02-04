@@ -38,11 +38,15 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onDelete }) => {
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
 
                 {/* Badge/Tag */}
-                <div className="absolute top-3 left-3">
-                    <span className="bg-teal-700/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+                <div className="absolute top-3 left-3 flex flex-col gap-2">
+                    <span className="bg-teal-700/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider w-fit">
                         {course.name.split(' ')[0]} NIVEL
                     </span>
+                    <span className="bg-blue-600/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider w-fit">
+                        {course.section}
+                    </span>
                 </div>
+
             </div>
 
             {/* Content */}
