@@ -59,6 +59,8 @@ export const normalizeText = (text: string | null | undefined): string => {
         { regex: /\u00BA/g, replacement: 'ú' },
         { regex: /\u00A9/g, replacement: 'é' },
         { regex: /\u00A1/g, replacement: 'á' },
+        { regex: /\u00AD/g, replacement: 'í' },
+        { regex: /í\u00AD/g, replacement: 'í' },
     ];
 
     let result = text;

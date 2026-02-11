@@ -28,6 +28,11 @@ export const DocumentItem = React.memo(({ doc, onDelete }: DocumentItemProps) =>
                     <p className="text-sm md:text-base font-bold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
                         {normalizeText(doc.name)}
                     </p>
+                    {doc.authors && (
+                        <p className="text-[10px] md:text-xs text-gray-500 font-semibold truncate italic">
+                            Por: {normalizeText(doc.authors)}
+                        </p>
+                    )}
                     <div className="flex items-center text-[10px] md:text-xs text-gray-400 font-medium gap-2">
                         <span>{formatDate(doc.createdAt).split('•')[0].trim()}</span>
                         <span className="text-gray-300">•</span>

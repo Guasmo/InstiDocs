@@ -22,9 +22,12 @@ export const courseService = {
         await api.post(`${coursesApi}/${courseId}/students`, { email });
     },
 
-    uploadFile: async (courseId: string, file: File): Promise<void> => {
+    uploadFile: async (courseId: string, file: File, title: string, description: string, authors: string): Promise<void> => {
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('name', title);
+        formData.append('description', description);
+        formData.append('authors', authors);
         await api.post(`${coursesApi}/${courseId}/files`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',

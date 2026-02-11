@@ -97,11 +97,11 @@ const CourseDetailsPage: React.FC = () => {
         }
     };
 
-    const handleUpload = async (file: File) => {
+    const handleUpload = async (file: File, title: string, description: string, authors: string) => {
         if (!id) return;
         try {
             setUploading(true);
-            await courseService.uploadFile(id, file);
+            await courseService.uploadFile(id, file, title, description, authors);
             await fetchCourse(); // Refresh to show new file
             notificationService.success('Archivo subido correctamente');
         } catch (error) {
@@ -297,7 +297,7 @@ const CourseDetailsPage: React.FC = () => {
                                 <h2 className="text-2xl font-bold text-gray-900">Documentos del Curso</h2>
                                 <p className="text-gray-500 text-sm mt-1">Gestiona y visualiza los archivos compartidos.</p>
                             </div>
-                            <UploadSection onUpload={handleUpload} uploading={uploading} />
+                            <UploadSection onUpload={handleUpload} uploading={uploading} defaultAuthor={user?.fullName || ''} />
                         </div>
 
                         {((user?.role === 'TEACHER' && course.teacherId === user.id) || user?.role === 'ADMIN') && (
@@ -348,9 +348,14 @@ const CourseDetailsPage: React.FC = () => {
                                                         </div>
                                                         <div className="min-w-0 flex-1">
                                                             <h4 className="font-semibold text-gray-900 truncate text-sm sm:text-base">{normalizeText(doc.name)}</h4>
+                                                            {doc.authors && (
+                                                                <p className="text-[10px] text-blue-600 font-bold italic">
+                                                                    Por: {normalizeText(doc.authors)}
+                                                                </p>
+                                                            )}
                                                             {doc.description && (
                                                                 <div className="mt-1 mb-1 bg-gray-50 p-1.5 rounded-lg border border-gray-100/50">
-                                                                    <p className="text-[10px] text-gray-500 italic line-clamp-1 leading-relaxed">
+                                                                    <p className="text-[10px] text-gray-500 italic line-clamp-2 leading-relaxed">
                                                                         {normalizeText(doc.description)}
                                                                     </p>
                                                                 </div>
@@ -408,6 +413,11 @@ const CourseDetailsPage: React.FC = () => {
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <h3 className="font-bold text-gray-900 group-hover:text-blue-700 transition-colors truncate text-sm md:text-lg">{normalizeText(doc.name)}</h3>
+                                                    {doc.authors && (
+                                                        <p className="text-[10px] md:text-sm text-blue-600 font-bold italic">
+                                                            Escrito por: {normalizeText(doc.authors)}
+                                                        </p>
+                                                    )}
                                                     {doc.description && (
                                                         <div className="mt-1 mb-1 bg-blue-50/50 p-2 rounded-xl border border-blue-100/30 overflow-hidden max-h-20 overflow-y-auto custom-scrollbar">
                                                             <p className="text-[10px] md:text-xs text-gray-600 font-medium italic leading-relaxed">

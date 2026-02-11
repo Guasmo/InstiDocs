@@ -7,11 +7,13 @@ const documentService = {
     /**
      * Upload a document file
      */
-    uploadDocument: async (file: File): Promise<UploadDocumentResponse> => {
+    uploadDocument: async (file: File, title: string, description: string, authors: string): Promise<UploadDocumentResponse> => {
         const formData = new FormData();
         formData.append('document', file);
+        formData.append('name', title);
+        formData.append('description', description);
+        formData.append('authors', authors);
 
-        // Use api instance directly but let axios set the Content-Type automatically
         const response = await api.post<UploadDocumentResponse>(
             uploadDocumentApi,
             formData,

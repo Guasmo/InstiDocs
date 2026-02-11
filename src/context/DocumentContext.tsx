@@ -8,7 +8,7 @@ interface DocumentContextType {
     loading: boolean;
     error: string | null;
     fetchDocuments: () => Promise<void>;
-    uploadDocument: (file: File) => Promise<any>;
+    uploadDocument: (file: File, title: string, description: string, authors: string) => Promise<any>;
     deleteDocument: (id: string) => Promise<void>;
 }
 
@@ -36,10 +36,10 @@ export const DocumentProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
     }, [isAuthenticated]);
 
-    const uploadDocument = useCallback(async (file: File) => {
+    const uploadDocument = useCallback(async (file: File, title: string, description: string, authors: string) => {
         try {
             setError(null);
-            const response = await documentService.uploadDocument(file);
+            const response = await documentService.uploadDocument(file, title, description, authors);
             await fetchDocuments();
             return response;
         } catch (err: any) {

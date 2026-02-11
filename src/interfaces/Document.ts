@@ -6,6 +6,7 @@ export interface Document {
     mimetype: string;
     size: number;
     description?: string;
+    authors?: string;
     userId: string;
 
     user?: {
@@ -22,6 +23,8 @@ export interface CreateDocumentDto {
     url: string;
     mimetype: string;
     size: number;
+    description?: string;
+    authors?: string;
 }
 
 export interface UploadDocumentResponse {
