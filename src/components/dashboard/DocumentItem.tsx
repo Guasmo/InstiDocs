@@ -4,12 +4,25 @@ import { Trash2, Upload, ChevronRight } from 'lucide-react';
 import { formatDate, formatFileSize, getDownloadUrl, getFileIcon, getFileIconColor, normalizeText } from '../../utils/formatters';
 import type { Document } from '../../interfaces/Document';
 
+import { useUser } from '../../hooks/useUser';
+
 interface DocumentItemProps {
     doc: Document;
     onDelete: (id: string, e: React.MouseEvent) => void;
 }
 
 export const DocumentItem = React.memo(({ doc, onDelete }: DocumentItemProps) => {
+    const { user } = useUser();
+
+    // Permission check for deletion
+    // Users can delete their own files
+    // ADMIN and TEACHER can delete any file
+    const canDelete = user && (
+        user.id === doc.userId ||
+        user.role === 'ADMIN' ||
+        user.role === 'TEACHER'
+    );
+
     return (
         <div
             onClick={() => window.open(doc.url, '_blank')}
@@ -33,14 +46,37 @@ export const DocumentItem = React.memo(({ doc, onDelete }: DocumentItemProps) =>
                             Por: {normalizeText(doc.authors)}
                         </p>
                     )}
-                    <div className="flex items-center text-[10px] md:text-xs text-gray-400 font-medium gap-2">
-                        <span>{formatDate(doc.createdAt).split('•')[0].trim()}</span>
-                        <span className="text-gray-300">•</span>
+                    {/* Description Display */}
+                    {doc.description && (
+                        <p className="text-sm text-gray-500 truncate mb-1 pr-4">
+                            {doc.description}
+                        </p>
+                    )}
+                    <div className="flex flex-col md:flex-row md:items-center text-[10px] md:text-xs text-gray-400 font-medium gap-0.5 md:gap-2">
+                        <span>{formatDate(doc.createdAt)}</span>
+                        <span className="hidden md:inline text-gray-300">•</span>
                         <span>{formatFileSize(doc.size)}</span>
+                        {doc.user && (
+                            <>
+                                <span className="hidden md:inline text-gray-300">•</span>
+                                <span className="text-gray-500">Subido por: {doc.user.fullName || doc.user.email}</span>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
 
+            {/* Right Side - Actions */}
+            <div className="ml-4 flex items-center gap-2 flex-shrink-0">
+                {canDelete && (
+                    <button
+                        onClick={(e) => onDelete(doc.id, e)}
+                        className="p-2.5 bg-gray-50 rounded-xl hover:bg-red-50 hover:shadow-sm transition-all group/delete"
+                        title="Eliminar"
+                    >
+                        <Trash2 size={18} className="text-gray-400 group-hover/delete:text-red-600 transition-colors" />
+                    </button>
+                )}
 
             {/* Right Side - Actions */}
             <div className="flex items-center gap-1.5 sm:gap-2 justify-start sm:justify-end sm:ml-4 sm:pl-0 pl-[52px]">
