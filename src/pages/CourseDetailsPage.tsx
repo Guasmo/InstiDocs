@@ -10,7 +10,7 @@ import LoadingFallback from '../components/shared/Loading';
 import { RefreshButton } from '../components/shared/RefreshButton';
 import { formatDate, normalizeText } from '../utils/formatters';
 import notificationService from '../service/notificationService';
-
+import { DocumentItem } from '../components/dashboard/DocumentItem';
 
 const CourseDetailsPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -112,7 +112,8 @@ const CourseDetailsPage: React.FC = () => {
         }
     };
 
-    const handleDeleteDocument = async (docId: string) => {
+    const handleDeleteDocument = async (docId: string, e: React.MouseEvent) => {
+        e.stopPropagation();
         if (!window.confirm('¿Estás seguro de que deseas eliminar este documento?')) return;
 
         try {
@@ -122,6 +123,18 @@ const CourseDetailsPage: React.FC = () => {
         } catch (error) {
             console.error('Error deleting document:', error);
             notificationService.error('No tienes permisos para eliminar este documento');
+        }
+    };
+
+    const handleDeleteCourse = async () => {
+        if (!id || !window.confirm('Are you sure you want to delete this course?')) return;
+        try {
+            await courseService.deleteCourse(id);
+            notificationService.success('Curso eliminado');
+            window.location.href = '/dashboard';
+        } catch (error) {
+            console.error('Error deleting course:', error);
+            notificationService.error('Error al eliminar curso');
         }
     };
 
@@ -335,61 +348,11 @@ const CourseDetailsPage: React.FC = () => {
                                         </div>
                                         <div className="grid gap-3">
                                             {docs?.map((doc) => (
-                                                <div
-                                                    key={doc.id}
-                                                    onClick={() => window.open(doc.url, '_blank')}
-                                                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white rounded-xl border border-gray-100 hover:border-blue-200 transition-all cursor-pointer gap-4"
-                                                >
-                                                    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                                                        <div className="p-2 sm:p-2.5 bg-blue-50 rounded-lg shrink-0">
-                                                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                            </svg>
-                                                        </div>
-                                                        <div className="min-w-0 flex-1">
-                                                            <h4 className="font-semibold text-gray-900 truncate text-sm sm:text-base">{normalizeText(doc.name)}</h4>
-                                                            {doc.authors && (
-                                                                <p className="text-[10px] text-blue-600 font-bold italic">
-                                                                    Por: {normalizeText(doc.authors)}
-                                                                </p>
-                                                            )}
-                                                            {doc.description && (
-                                                                <div className="mt-1 mb-1 bg-gray-50 p-1.5 rounded-lg border border-gray-100/50">
-                                                                    <p className="text-[10px] text-gray-500 italic line-clamp-2 leading-relaxed">
-                                                                        {normalizeText(doc.description)}
-                                                                    </p>
-                                                                </div>
-                                                            )}
-                                                            <p className="text-[10px] text-gray-400">{formatDate(doc.createdAt)}</p>
-                                                        </div>
-
-                                                    </div>
-                                                    <div className="flex items-center gap-2 justify-start sm:justify-end shrink-0 sm:pl-0 pl-[44px]">
-                                                        <a
-                                                            href={doc.url}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            onClick={(e) => e.stopPropagation()}
-                                                            className="text-blue-600 hover:text-white hover:bg-blue-600 text-[10px] font-bold bg-blue-50 px-2.5 py-1 rounded-lg transition-all whitespace-nowrap"
-                                                        >
-                                                            Descargar
-                                                        </a>
-                                                        {(user?.role === 'ADMIN' || (user?.role === 'TEACHER' && course.teacherId === user.id) || user?.id === doc.userId) && (
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    handleDeleteDocument(doc.id);
-                                                                }}
-                                                                className="p-1 px-2 text-red-500 hover:text-white hover:bg-red-500 bg-red-50 rounded-lg transition-all"
-                                                                title="Eliminar documento"
-                                                            >
-                                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                </svg>
-                                                            </button>
-                                                        )}
-                                                    </div>
-
+                                                <div key={doc.id} className="bg-white rounded-xl border border-gray-100 hover:border-blue-200 transition-all overflow-hidden">
+                                                    <DocumentItem
+                                                        doc={doc as any}
+                                                        onDelete={handleDeleteDocument}
+                                                    />
                                                 </div>
                                             ))}
                                         </div>
@@ -400,63 +363,11 @@ const CourseDetailsPage: React.FC = () => {
                             course.documents && course.documents.length > 0 ? (
                                 <div className="grid gap-4">
                                     {course.documents.map((doc) => (
-                                        <div
-                                            key={doc.id}
-                                            onClick={() => window.open(doc.url, '_blank')}
-                                            className="flex flex-col md:flex-row md:items-center justify-between p-5 border border-gray-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/30 transition-all group cursor-pointer gap-6"
-                                        >
-                                            <div className="flex items-center gap-4 md:gap-5 flex-1 min-w-0">
-                                                <div className="p-2 sm:p-3 bg-blue-50 rounded-xl group-hover:bg-blue-100 transition-colors shrink-0">
-                                                    <svg className="w-5 h-5 md:w-6 md:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                    </svg>
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <h3 className="font-bold text-gray-900 group-hover:text-blue-700 transition-colors truncate text-sm md:text-lg">{normalizeText(doc.name)}</h3>
-                                                    {doc.authors && (
-                                                        <p className="text-[10px] md:text-sm text-blue-600 font-bold italic">
-                                                            Escrito por: {normalizeText(doc.authors)}
-                                                        </p>
-                                                    )}
-                                                    {doc.description && (
-                                                        <div className="mt-1 mb-1 bg-blue-50/50 p-2 rounded-xl border border-blue-100/30 overflow-hidden max-h-20 overflow-y-auto custom-scrollbar">
-                                                            <p className="text-[10px] md:text-xs text-gray-600 font-medium italic leading-relaxed">
-                                                                {normalizeText(doc.description)}
-                                                            </p>
-                                                        </div>
-                                                    )}
-                                                    <p className="text-[10px] md:text-sm text-gray-500 mt-0.5">
-                                                        Subido por: <span className="text-gray-700 font-medium">{doc.user?.fullName || doc.user?.email}</span> • {formatDate(doc.createdAt)}
-                                                    </p>
-                                                </div>
-
-                                            </div>
-                                            <div className="flex items-center gap-2 justify-start md:justify-end shrink-0 md:pl-0 pl-[52px]">
-                                                <a
-                                                    href={doc.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-1.5 md:px-5 md:py-2.5 rounded-xl font-bold text-[10px] md:text-sm transition-all shadow-sm whitespace-nowrap"
-                                                >
-                                                    Descargar
-                                                </a>
-                                                {(user?.role === 'ADMIN' || (user?.role === 'TEACHER' && course.teacherId === user.id) || user?.id === doc.userId) && (
-                                                    <button
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleDeleteDocument(doc.id);
-                                                        }}
-                                                        className="p-1.5 md:p-2.5 text-red-500 hover:text-white hover:bg-red-500 bg-red-50 rounded-xl transition-all"
-                                                        title="Eliminar documento"
-                                                    >
-                                                        <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                        </svg>
-                                                    </button>
-                                                )}
-                                            </div>
-
+                                        <div key={doc.id} className="overflow-hidden border border-gray-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50/30 transition-all">
+                                            <DocumentItem
+                                                doc={doc as any}
+                                                onDelete={handleDeleteDocument}
+                                            />
                                         </div>
                                     ))}
                                 </div>
