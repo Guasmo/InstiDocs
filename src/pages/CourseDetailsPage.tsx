@@ -8,7 +8,6 @@ import { useUserContext } from '../context/UserContext';
 import { UploadSection } from '../components/dashboard/UploadSection';
 import LoadingFallback from '../components/shared/Loading';
 import { RefreshButton } from '../components/shared/RefreshButton';
-import { formatDate, normalizeText } from '../utils/formatters';
 import notificationService from '../service/notificationService';
 import { DocumentItem } from '../components/dashboard/DocumentItem';
 
@@ -126,17 +125,6 @@ const CourseDetailsPage: React.FC = () => {
         }
     };
 
-    const handleDeleteCourse = async () => {
-        if (!id || !window.confirm('Are you sure you want to delete this course?')) return;
-        try {
-            await courseService.deleteCourse(id);
-            notificationService.success('Curso eliminado');
-            window.location.href = '/dashboard';
-        } catch (error) {
-            console.error('Error deleting course:', error);
-            notificationService.error('Error al eliminar curso');
-        }
-    };
 
 
     if (loading) return <LoadingFallback />;
