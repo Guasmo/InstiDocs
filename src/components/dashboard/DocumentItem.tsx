@@ -67,18 +67,6 @@ export const DocumentItem = React.memo(({ doc, onDelete }: DocumentItemProps) =>
             </div>
 
             {/* Right Side - Actions */}
-            <div className="ml-4 flex items-center gap-2 flex-shrink-0">
-                {canDelete && (
-                    <button
-                        onClick={(e) => onDelete(doc.id, e)}
-                        className="p-2.5 bg-gray-50 rounded-xl hover:bg-red-50 hover:shadow-sm transition-all group/delete"
-                        title="Eliminar"
-                    >
-                        <Trash2 size={18} className="text-gray-400 group-hover/delete:text-red-600 transition-colors" />
-                    </button>
-                )}
-
-            {/* Right Side - Actions */}
             <div className="flex items-center gap-1.5 sm:gap-2 justify-start sm:justify-end sm:ml-4 sm:pl-0 pl-[52px]">
                 {/* Download Button */}
                 <a
@@ -92,13 +80,15 @@ export const DocumentItem = React.memo(({ doc, onDelete }: DocumentItemProps) =>
                     <span className="text-[10px] sm:hidden font-bold">Descargar</span>
                 </a>
 
-                <button
-                    onClick={(e) => onDelete(doc.id, e)}
-                    className="p-1.5 md:p-2 bg-gray-50 text-gray-500 rounded-lg hover:bg-red-600 hover:text-white transition-all group/delete"
-                    title="Eliminar"
-                >
-                    <Trash2 size={14} className="md:w-4 md:h-4" />
-                </button>
+                {canDelete && (
+                    <button
+                        onClick={(e) => onDelete(doc.id, e)}
+                        className="p-1.5 md:p-2 bg-gray-50 text-gray-500 rounded-lg hover:bg-red-600 hover:text-white transition-all group/delete"
+                        title="Eliminar"
+                    >
+                        <Trash2 size={14} className="md:w-4 md:h-4" />
+                    </button>
+                )}
 
                 <div className="hidden sm:flex p-1.5 bg-gray-50 rounded-lg group-hover:bg-white transition-colors">
                     <ChevronRight size={16} className="text-gray-300 group-hover:text-blue-600 transition-colors" />
